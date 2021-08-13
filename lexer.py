@@ -1,7 +1,7 @@
-from typing import Optional, List, Any
+from collections import deque
+from typing import Optional, List, Any, Deque
 
 from constants import *
-
 
 def lex_string(incoming_str: str) -> (Optional[str], str):
     json_seq = []

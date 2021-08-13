@@ -1,12 +1,24 @@
 import unittest
+
 from parser import *
 from lexer import *
 
 
 class ParserTest(unittest.TestCase):
 
-    def test_from_string(self):
-        self.assertDictEqual(from_string('{"foo": 1}'), {"foo": 1})
+    def test_parse(self):
+        json, _ = parse(['{', 'foo', ':', '[', 1, ',', 2, ',', '{', 'bar', ':', 2, '}', ']', '}'])
+        self.assertDictEqual(json, {'foo': [1, 2, {'bar': 2}]})
+
+    def test_parse_array(self):
+        tokens = lex("[1, 2, 3, 4,5]")
+        arr, _ = parse(tokens)
+        self.assertEqual(arr, [1, 2, 3, 4, 5])
+
+    def test_parse_object(self):
+        tokens = lex('{"hello" : 1, "world" : 2}')
+        obj, _ = parse(tokens)
+        self.assertDictEqual(obj, {"hello": 1, "world": 2})
 
 
 class LexerTest(unittest.TestCase):
