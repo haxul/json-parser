@@ -93,6 +93,6 @@ def lex(string: str) -> Deque[Any]:
             tokens.append(c)
             string = string[1:]
         else:
-            raise Exception('Unexpected character: {}'.format(c))
+            raise Exception(f'Unexpected character: {c}')
 
     return tokens
