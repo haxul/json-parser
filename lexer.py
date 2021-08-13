@@ -1,29 +1,30 @@
 from collections import deque
-from typing import Optional, List, Any, Deque
+from typing import Optional, Any, Deque
 
 from constants import *
 
-def lex_string(incoming_str: str) -> (Optional[str], str):
+
+def lex_string(incoming: str) -> (Optional[str], str):
     json_seq = []
 
-    if incoming_str[0] != JSON_QUOTE:
-        return None, incoming_str
+    if incoming[0] != JSON_QUOTE:
+        return None, incoming
 
-    for i in range(1, len(incoming_str)):
-        if incoming_str[i] == JSON_QUOTE:
-            return "".join(json_seq), incoming_str[len(json_seq) + 2:]
+    for i in range(1, len(incoming)):
+        if incoming[i] == JSON_QUOTE:
+            return "".join(json_seq), incoming[len(json_seq) + 2:]
         else:
-            json_seq.append(incoming_str[i])
+            json_seq.append(incoming[i])
 
     raise Exception('Expected end-of-string quote')
 
 
-def lex_number(string) -> (Optional[float], str):
+def lex_number(incoming) -> (Optional[float], str):
     json_number = []
     number_characters = {str(k): True for k in range(0, 10)} | {".": True}
 
     dot_added = False
-    for c in string:
+    for c in incoming:
         if c in number_characters:
             if c == "." and not dot_added:
                 dot_added = True
@@ -35,10 +36,10 @@ def lex_number(string) -> (Optional[float], str):
         else:
             break
 
-    rest = string[len(json_number):]
+    rest = incoming[len(json_number):]
 
     if not len(json_number):
-        return None, string
+        return None, incoming
 
     if dot_added:
         return float("".join(json_number)), rest
@@ -46,12 +47,12 @@ def lex_number(string) -> (Optional[float], str):
     return int("".join(json_number)), rest
 
 
-def lex_bool(string: str) -> (Optional[bool], str):
-    if len(string) >= TRUE_LEN and string[:TRUE_LEN] == 'true':
-        return True, string[TRUE_LEN:]
-    if len(string) >= FALSE_LEN and string[:FALSE_LEN] == 'false':
-        return False, string[FALSE_LEN:]
-    return None, string
+def lex_bool(incoming: str) -> (Optional[bool], str):
+    if len(incoming) >= TRUE_LEN and incoming[:TRUE_LEN] == 'true':
+        return True, incoming[TRUE_LEN:]
+    if len(incoming) >= FALSE_LEN and incoming[:FALSE_LEN] == 'false':
+        return False, incoming[FALSE_LEN:]
+    return None, incoming
 
 
 def lex_null(string: str) -> (Optional[bool], str):
@@ -61,8 +62,8 @@ def lex_null(string: str) -> (Optional[bool], str):
     return None, string
 
 
-def lex(string: str) -> List[Any]:
-    tokens = []
+def lex(string: str) -> Deque[Any]:
+    tokens = deque([])
     while len(string):
         json_string, string = lex_string(string)
         if json_string is not None:

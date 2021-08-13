@@ -7,7 +7,7 @@ from lexer import *
 class ParserTest(unittest.TestCase):
 
     def test_parse(self):
-        json, _ = parse(['{', 'foo', ':', '[', 1, ',', 2, ',', '{', 'bar', ':', 2, '}', ']', '}'])
+        json, _ = parse(deque(['{', 'foo', ':', '[', 1, ',', 2, ',', '{', 'bar', ':', 2, '}', ']', '}']))
         self.assertDictEqual(json, {'foo': [1, 2, {'bar': 2}]})
 
     def test_parse_array(self):
@@ -25,7 +25,7 @@ class LexerTest(unittest.TestCase):
 
     def test_lex(self):
         self.assertEqual(lex('{"foo": [1, 2, {"bar": 2}]}'),
-                         ['{', 'foo', ':', '[', 1, ',', 2, ',', '{', 'bar', ':', 2, '}', ']', '}'])
+                         deque(['{', 'foo', ':', '[', 1, ',', 2, ',', '{', 'bar', ':', 2, '}', ']', '}']))
 
     def test_lex_string(self):
         self.assertEqual(lex_string('"foo"'), ("foo", ""))
